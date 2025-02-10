@@ -35,7 +35,7 @@ type AssetHeader =
 
 const visibleHeaders: AssetHeader[] = ["cusip", "identifier", "rating", "par"];
 
-export const CsvUploader: React.FC = () => {
+export const CsvUploader: React.FC<{ title: string }> = ({ title }) => {
   const [data, setData] = useState<CsvRow[]>([]);
   const [headers, setHeaders] = useState<AssetHeader[]>([]);
 
@@ -92,15 +92,15 @@ export const CsvUploader: React.FC = () => {
       {/* Table Section */}
       {data.length > 0 && (
         <div className="mt-6 max-w-[1000px]">
-          <h3 className="mb-4 text-xl font-semibold">CSV Data</h3>
+          <h3 className="mb-4 text-xl font-semibold">{title}</h3>
           <div className="max-h-[1200px] overflow-x-auto overflow-y-auto">
-            <table className="min-w-full border border-gray-200 bg-zinc-900">
+            <table className="min-w-full border border-zinc-700 bg-zinc-900">
               <thead>
-                <tr className="bg-blue-500">
+                <tr className="bg-slate-900">
                   {visibleHeaders.map((header) => (
                     <th
                       key={header}
-                      className="border border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-200"
+                      className="border border-zinc-700 px-4 py-2 text-left text-sm font-medium text-gray-200"
                     >
                       {header}
                     </th>
@@ -114,15 +114,15 @@ export const CsvUploader: React.FC = () => {
                     className={cn(
                       "cursor-pointer",
                       selectedRow?.cusip === row.cusip
-                        ? "bg-zinc-700"
-                        : "hover:bg-zinc-800",
+                        ? "bg-slate-700"
+                        : "hover:bg-slate-700/50",
                     )}
                     onClick={() => handleSelectRow(row)}
                   >
                     {visibleHeaders.map((header) => (
                       <td
                         key={header}
-                        className="border border-gray-200 px-4 py-2 text-sm text-gray-200"
+                        className="border border-zinc-700 px-4 py-2 text-sm text-gray-200"
                       >
                         {row[header]}
                       </td>
