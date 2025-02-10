@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 import Papa from "papaparse";
 import { cn } from "~/utils/styles";
 
-type CsvRow = Record<string, string>;
+type CsvRow = Record<AssetHeader, string>;
 
 type AssetHeader =
   | "cusip"
@@ -39,6 +39,8 @@ export const CsvUploader: React.FC = () => {
   const [data, setData] = useState<CsvRow[]>([]);
   const [headers, setHeaders] = useState<AssetHeader[]>([]);
 
+  const [selectedRow, setSelectedRow] = useState<CsvRow | null>(null);
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
@@ -58,14 +60,17 @@ export const CsvUploader: React.FC = () => {
     }
   }, []);
 
-  console.log(headers);
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       "text/csv": [".csv"], // Only accept CSV files
     },
   });
+
+  const handleSelectRow = (row: CsvRow) => {
+    console.log(row);
+    setSelectedRow(row);
+  };
 
   return (
     <div>
@@ -88,10 +93,10 @@ export const CsvUploader: React.FC = () => {
       {data.length > 0 && (
         <div className="mt-6 max-w-[1000px]">
           <h3 className="mb-4 text-xl font-semibold">CSV Data</h3>
-          <div className="h-[1200px] overflow-x-auto overflow-y-scroll">
-            <table className="min-w-full border border-gray-200 bg-zinc-800">
+          <div className="max-h-[1200px] overflow-x-auto overflow-y-auto">
+            <table className="min-w-full border border-gray-200 bg-zinc-900">
               <thead>
-                <tr className="bg-zinc-700">
+                <tr className="bg-blue-500">
                   {visibleHeaders.map((header) => (
                     <th
                       key={header}
@@ -103,8 +108,17 @@ export const CsvUploader: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {data.map((row, rowIndex) => (
-                  <tr key={rowIndex} className="hover:bg-gray-500">
+                {[...data.slice(0, 10)].map((row, rowIndex) => (
+                  <tr
+                    key={rowIndex}
+                    className={cn(
+                      "cursor-pointer",
+                      selectedRow?.cusip === row.cusip
+                        ? "bg-zinc-700"
+                        : "hover:bg-zinc-800",
+                    )}
+                    onClick={() => handleSelectRow(row)}
+                  >
                     {visibleHeaders.map((header) => (
                       <td
                         key={header}
